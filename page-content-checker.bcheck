@@ -1,0 +1,22 @@
+metadata:
+    language: v2-beta
+    name: "Page content checker"
+    description: "Looks in responses to see if page content has changed"
+    tags: "check page content", "passive"
+    author: "KaePee"
+
+given response then
+    # check connectivity
+    if {base.response.status_code} is "404" then
+        report issue:
+            severity: high
+            confidence: firm
+            detail: "Site unreachable"
+    # Check if the response contains any of the expected content
+    else if not({base.response} matches "Scrowton") then
+        report issue:
+            severity: high
+            confidence: firm
+            detail: "Probable page redirection or missing content"
+            remediation: "Check DNS/web config settings"
+    end if
